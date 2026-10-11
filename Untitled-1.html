@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="id">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width,initial-scale=1" name="viewport"/>
+  <title>
+   Apriori | Analisis Algoritma Komputasi
+  </title>
+  <style>
+   :root {
+    --navy:#10213b;
+    --blue:#2e63d7;
+    --bg:#f3f6fb;
+    --ink:#1d2a3d;
+    --muted:#637187;
+    --line:#dce4ef;
+    --white:#fff;
+    --pale:#edf3ff;
+    --green:#137653;
+    --orange:#9a5b0b;
+}
+* {
+    box-sizing:border-box;
+}
+body {
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font:15px/1.55 Inter,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+}
+header {
+    background:linear-gradient(125deg,#101f38,#214c8d);
+    color:white;
+    padding:30px 18px 34px;
+}.wrap {
+    max-width:1180px;
+    margin:auto;
+}.eyebrow {
+    text-transform:uppercase;
+    letter-spacing:.13em;
+    color:#c4d7ff;
+    font-size:12px;
+    font-weight:800;
+}
+h1 {
+    font-size:clamp(27px,4vw,42px);
+    line-height:1.1;
+    margin:9px 0 10px;
+}
+header p {
+    color:#e2eaff;
+    max-width:850px;
+    margin:0;
+}
+main {
+    max-width:1180px;
+    margin:24px auto;
+    padding:0 16px 44px;
+}.tabs {
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    margin-bottom:18px;
+}.tab {
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:13px;
+    padding:14px;
+    text-align:left;
+    color:var(--ink);
+    font:inherit;
+    font-weight:800;
+    cursor:pointer;
+}.tab small {
+    display:block;
+    color:var(--muted);
+    font-weight:500;
+    margin-top:3px;
+}.tab.active {
+    background:var(--pale);
+    border-color:#8eafff;
+    box-shadow:0 0 0 2px #3268df12;
+}.layout {
+    display:grid;
+    grid-template-columns:350px minmax(0,1fr);
+    gap:18px;
+}.card {
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:20px;
+    box-shadow:0 5px 20px #11213b08;
+}
+h2 {
+    font-size:19px;
+    margin:0 0 8px;
+}
+h3 {
+    font-size:15px;
+    margin:18px 0 8px;
+}.muted,.desc {
+    color:var(--muted);
+    font-size:13px;
+}.desc {
+    margin:0 0 14px;
+}
+label {
+    display:block;
+    font-size:13px;
+    font-weight:750;
+    margin:13px 0 5px;
+}
+textarea,input {
+    width:100%;
+    font:inherit;
+    border:1px solid #cbd6e5;
+    border-radius:10px;
+    padding:10px 11px;
+    background:#fff;
+    color:var(--ink);
+}
+textarea {
+    min-height:195px;
+    resize:vertical;
+    font:13px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;
+}.hint {
+    font-size:12px;
+    color:var(--muted);
+    margin-top:5px;
+}.two {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+button.primary,button.secondary {
+    width:100%;
+    border:0;
+    border-radius:10px;
+    padding:12px 14px;
+    font:inherit;
+    font-weight:800;
+    cursor:pointer;
+    margin-top:13px;
+}.primary {
+    background:var(--blue);
+    color:#fff;
+}.secondary {
+    background:#eaf0fb;
+    color:#244b91;
+    margin-top:8px;
+}.metrics {
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    margin-bottom:16px;
+}.metric {
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:13px;
+    padding:14px;
+}.metric strong {
+    font-size:25px;
+    display:block;
+    line-height:1.25;
+}.metric span {
+    font-size:12px;
+    color:var(--muted);
+}.section {
+    margin-top:18px;
+}.table-wrap {
+    overflow:auto;
+    border:1px solid var(--line);
+    border-radius:10px;
+}
+table {
+    width:100%;
+    border-collapse:collapse;
+    font-size:13px;
+}
+th,td {
+    text-align:left;
+    padding:9px 8px;
+    border-bottom:1px solid var(--line);
+    vertical-align:top;
+}
+th {
+    background:#f6f8fc;
+    color:#43536b;
+    font-size:12px;
+    white-space:nowrap;
+}
+tbody tr:last-child td {
+    border-bottom:0;
+}.empty {
+    background:#f7f9fd;
+    border-radius:10px;
+    padding:13px;
+    color:var(--muted);
+    font-size:13px;
+}.note {
+    background:#f1f6ff;
+    border-left:3px solid #7ca1ef;
+    border-radius:0 10px 10px 0;
+    padding:12px 14px;
+    font-size:13px;
+}.tag {
+    display:inline-block;
+    background:#e7f7ef;
+    color:#126849;
+    border-radius:99px;
+    padding:3px 8px;
+    font-size:11px;
+    font-weight:800;
+}.steps {
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:8px;
+}.step {
+    background:#f7f9fd;
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:10px;
+    font-size:12px;
+}.step b {
+    display:block;
+    margin-bottom:4px;
+}
+footer {
+    text-align:center;
+    color:var(--muted);
+    font-size:12px;
+    padding:0 16px 25px;
+}
+@media(max-width:850px) {.layout{grid-template-columns:1fr}.tabs{grid-template-columns:1fr}.steps{grid-template-columns:repeat(2,1fr)};
+}
+@media(max-width:480px) {.metrics{grid-template-columns:1fr}.card{padding:15px}.two{grid-template-columns:1fr};
+}
+  </style>
+ </head>
+ <body>
+  <header>
+   <div class="wrap">
+    <div class="eyebrow">
+     Tugas Analisis Algoritma Komputasi
+    </div>
+    <h1>
+     Implementasi Algoritma Apriori
+    </h1>
+    <p>
+     Web demonstrasi untuk analisis frequent itemsets dan aturan asosiasi. Implementasi mengikuti konsep generate, prune, count, dan select pada jurnal: &ldquo;Analisis Algoritma Apriori: Kompleksitas, Implementasi, dan Evaluasi Empiris terhadap FP-Growth&rdquo;.
+    </p>
+   </div>
+  </header>
+  <main>
+   <div class="tabs" role="tablist">
+    <button class="tab active" data-case="0">
+     Studi Kasus 1
+     <small>
+      Data contoh pada jurnal
+     </small>
+    </button>
+    <button class="tab" data-case="1">
+     Studi Kasus 2
+     <small>
+      Transaksi ritel sederhana
+     </small>
+    </button>
+    <button class="tab" data-case="2">
+     Studi Kasus 3
+     <small>
+      Paket layanan seluler
+     </small>
+    </button>
+   </div>
+   <div class="layout">
+    <section class="card">
+     <h2 id="caseTitle">
+      Contoh manual jurnal
+     </h2>
+     <p class="desc" id="caseDesc">
+      Lima transaksi yang sama dengan contoh manual pada dokumen.
+     </p>
+     <label for="transactions">
+      Data transaksi
+     </label>
+     <textarea id="transactions" spellcheck="false"></textarea>
+     <div class="hint">
+      Satu baris untuk satu transaksi; pisahkan item dengan koma.
+     </div>
+     <div class="two">
+      <div>
+       <label for="support">
+        Minimum support (%)
+       </label>
+       <input id="support" max="100" min="1" type="number" value="40"/>
+      </div>
+      <div>
+       <label for="confidence">
+        Minimum confidence (%)
+       </label>
+       <input id="confidence" max="100" min="1" type="number" value="60"/>
+      </div>
+     </div>
+     <button class="primary" id="run">
+      Jalankan algoritma Apriori
+     </button>
+     <button class="secondary" id="restore">
+      Pulihkan data studi kasus
+     </button>
+     <div class="section note">
+      <b>
+       Prinsip anti-monotone:
+      </b>
+      jika suatu itemset tidak frequent, semua kombinasi lebih besar yang memuat itemset itu juga tidak frequent. Kandidat seperti ini dipangkas sebelum dihitung.
+     </div>
+     <div class="section">
+      <h3>
+       Tahapan algoritma
+      </h3>
+      <div class="steps">
+       <div class="step">
+        <b>
+         1. Generate
+        </b>
+        Bangkitkan kandidat
+       </div>
+       <div class="step">
+        <b>
+         2. Prune
+        </b>
+        Pangkas kandidat
+       </div>
+       <div class="step">
+        <b>
+         3. Count
+        </b>
+        Hitung support
+       </div>
+       <div class="step">
+        <b>
+         4. Select
+        </b>
+        Pilih itemset sering
+       </div>
+      </div>
+     </div>
+    </section>
+    <section>
+     <div class="metrics">
+      <div class="metric">
+       <strong id="nTx">
+        5
+       </strong>
+       <span>
+        Jumlah transaksi
+       </span>
+      </div>
+      <div class="metric">
+       <strong id="nItems">
+        6
+       </strong>
+       <span>
+        Item unik
+       </span>
+      </div>
+      <div class="metric">
+       <strong id="nFrequent">
+        17
+       </strong>
+       <span>
+        Frequent itemsets
+       </span>
+      </div>
+     </div>
+     <div class="card">
+      <h2>
+       Frequent itemsets
+      </h2>
+      <p class="desc">
+       Itemset yang memenuhi nilai minimum support.
+      </p>
+      <div class="empty" id="itemsetResults">
+       Menghitung hasil&hellip;
+      </div>
+      <div class="section">
+       <h2>
+        Aturan asosiasi
+       </h2>
+       <p class="desc">
+        Aturan X &rarr; Y yang memenuhi minimum confidence, dilengkapi support, confidence, dan lift.
+       </p>
+       <div class="empty" id="ruleResults">
+        Menghitung aturan&hellip;
+       </div>
+      </div>
+      <div class="section">
+       <h2>
+        Interpretasi hasil
+       </h2>
+       <div class="note" id="interpretation">
+        Hasil akan dijelaskan di sini.
+       </div>
+      </div>
+      <div class="section">
+       <h2>
+        Ringkasan proses
+       </h2>
+       <div class="note" id="process">
+        Rincian kandidat akan tampil setelah proses.
+       </div>
+      </div>
+     </div>
+     <div class="card section">
+      <h2>
+       Analisis kompleksitas dari jurnal
+      </h2>
+      <table>
+       <thead>
+        <tr>
+         <th>
+          Kondisi
+         </th>
+         <th>
+          Kompleksitas waktu
+         </th>
+         <th>
+          Inti penjelasan
+         </th>
+        </tr>
+       </thead>
+       <tbody>
+        <tr>
+         <td>
+          Kasus terbaik
+         </td>
+         <td>
+          &Theta;(n &middot; t̄)
+         </td>
+         <td>
+          Ambang support tinggi; L₁ kosong atau berisi paling banyak satu item.
+         </td>
+        </tr>
+        <tr>
+         <td>
+          Kasus tipikal
+         </td>
+         <td>
+          O(n), dengan asumsi tertentu
+         </td>
+         <td>
+          Jika minimum support dan panjang transaksi maksimum tetap, jumlah kandidat per level terbatas.
+         </td>
+        </tr>
+        <tr>
+         <td>
+          Kasus terburuk
+         </td>
+         <td>
+          O(n &middot; m &middot; 2ᵐ)
+         </td>
+         <td>
+          Sebagian besar atau seluruh kombinasi item dapat menjadi frequent sehingga kandidat tumbuh eksponensial.
+         </td>
+        </tr>
+       </tbody>
+      </table>
+      <p class="muted">
+       Notasi: n = jumlah transaksi, m = jumlah item, t̄ = rata-rata panjang transaksi. Ringkasan ini mengacu pada analisis di dokumen, bukan hasil benchmark baru oleh halaman web ini.
+      </p>
+     </div>
+     <div class="card section">
+      <h2>
+       Apriori dan FP-Growth
+      </h2>
+      <table>
+       <thead>
+        <tr>
+         <th>
+          Aspek
+         </th>
+         <th>
+          Apriori
+         </th>
+         <th>
+          FP-Growth
+         </th>
+        </tr>
+       </thead>
+       <tbody>
+        <tr>
+         <td>
+          Cara kerja
+         </td>
+         <td>
+          Membangkitkan dan menguji kandidat
+         </td>
+         <td>
+          Membangun FP-tree dan menumbuhkan pola
+         </td>
+        </tr>
+        <tr>
+         <td>
+          Pemindaian data
+         </td>
+         <td>
+          Berulang pada tiap level
+         </td>
+         <td>
+          Umumnya dua kali
+         </td>
+        </tr>
+        <tr>
+         <td>
+          Kandidat
+         </td>
+         <td>
+          Ya, dengan pemangkasan
+         </td>
+         <td>
+          Tidak membangkitkan kandidat eksplisit
+         </td>
+        </tr>
+        <tr>
+         <td>
+          Trade-off
+         </td>
+         <td>
+          Mudah dipahami untuk pembelajaran
+         </td>
+         <td>
+          Sering lebih efisien pada data besar/support rendah
+         </td>
+        </tr>
+       </tbody>
+      </table>
+      <p class="muted">
+       Tabel merupakan ringkasan konseptual dari jurnal. Halaman ini menjalankan Apriori saja; tidak mengklaim mengukur waktu FP-Growth.
+      </p>
+     </div>
+    </section>
+   </div>
+  </main>
+  <footer>
+   Apriori Web &bull; Data contoh dapat diedit &bull; Seluruh perhitungan dilakukan di browser &bull; Data contoh bukan data transaksi nyata
+  </footer>
+  <script>
+   const studyCases=[{
+    title:"Contoh manual jurnal",
+    desc:"Lima transaksi dan ambang minsup 40% serta minconf 60%, mengikuti contoh pada dokumen.",
+    support:40,
+    confidence:60,
+    data:"Roti, Susu\nBir, Diapers, Roti, Telur\nBir, Cola, Diapers, Susu\nBir, Diapers, Roti, Susu\nCola, Diapers, Roti, Susu"
+},
+ {
+    title:"Transaksi ritel sederhana",
+    desc:"Dataset simulasi untuk menguji pola pembelian produk ritel.",
+    support:30,
+    confidence:50,
+    data:"Beras, Minyak, Gula\nBeras, Minyak\nBeras, Telur, Mi Instan\nMinyak, Gula, Kopi\nBeras, Minyak, Gula\nMi Instan, Telur\nBeras, Minyak, Telur\nGula, Kopi"
+},
+ {
+    title:"Paket layanan seluler",
+    desc:"Dataset simulasi yang terinspirasi domain layanan operator seluler yang dibahas pada bagian penelitian terkait.",
+    support:25,
+    confidence:50,
+    data:"Paket Data, Telepon\nPaket Data, SMS\nPaket Data, Telepon, SMS\nTelepon, SMS\nPaket Data, Telepon\nPaket Data, Musik\nPaket Data, Telepon, Musik\nSMS, Musik"
+}];
+ let active=0;
+ const $=id=>document.getElementById(id);
+ function loadCase(i) {
+    active=i;
+    let c=studyCases[i];
+    $("caseTitle").textContent=c.title;
+    $("caseDesc").textContent=c.desc;
+    $("transactions").value=c.data;
+    $("support").value=c.support;
+    $("confidence").value=c.confidence;
+    document.querySelectorAll(".tab").forEach((b,j) =>b.classList.toggle("active",i===j));
+    run();
+ 
+}
+ function parseTx() {
+    return $("transactions").value.split(/\r?\n/).map(s=>s.split(",").map(x=>x.trim()).filter(Boolean)).filter(x=>x.length).map(x=>[...new Set(x)]);
+ 
+}
+ function key(a) {
+    return[...a].sort((x,y) =>x.localeCompare(y,"id")).join("\u001f")
+}
+ function label(a) {
+    return a.join(" + ")
+}
+ function apriori(tx,minsup,minconf) {
+    const n=tx.length,
+    items=[...new Set(tx.flat())].sort((a,b) =>a.localeCompare(b,"id")),
+    threshold=Math.max(1,Math.ceil(minsup*n-1e-10)),
+    counts=new Map(),
+    frequent=[],
+    levels=[];
+    let prev=[];
+    for(const item of items) {
+        const a=[item],
+        k=key(a),
+        count=tx.filter(t=>t.includes(item)).length;
+        counts.set(k,count);
+        if(count>=threshold) prev.push(a);
+ 
+    }
+ let level=1,
+    candidateCounts=[];
+    while(prev.length) {
+        levels.push({
+            k:level,sets:prev.map(a=>({
+                items:a,count:counts.get(key(a))
+            }))
+        });
+        for(const a of prev) frequent.push({
+            items:a,count:counts.get(key(a)) ,support:counts.get(key(a)) /n
+        });
+        const candidates=new Map();
+        for(let i=0;i<prev.length;i++) for(let j=i+1;j<prev.length;j++) {
+            const joined=[...new Set([...prev[i],...prev[j]])].sort((a,b) =>a.localeCompare(b,"id"));
+            if(joined.length!==level+1) continue;
+            let valid=true;
+            for(let z=0;z<joined.length;z++) {
+                const sub=joined.filter((_,ix) =>ix!==z);
+                if(!prev.some(p=>key(p) ===key(sub))) {
+                    valid=false;
+                    break;
+ 
+                }
+ 
+            } if(valid) candidates.set(key(joined) ,joined);
+ 
+        } candidateCounts.push({
+            level:level+1,count:candidates.size
+        });
+        const next=[];
+        for(const[k,
+        a] of candidates) {
+            const count=tx.filter(t=>a.every(x=>t.includes(x))).length;
+            counts.set(k,count);
+            if(count>=threshold) next.push(a);
+ 
+        } prev=next;
+        level++;
+ 
+    }
+ const rules=[];
+    for(const f of frequent.filter(x=>x.items.length>=2)) {
+        const a=f.items;
+        if(a.length>18) continue;
+        for(let mask=1;mask<(1<<a.length) -1;mask++) {
+            const left=a.filter((_,i) =>mask&(1<<i)),
+            right=a.filter((_,i) =>!(mask&(1<<i)));
+            const lc=counts.get(key(left)),
+            rc=counts.get(key(right));
+            if(!lc||!rc) continue;
+            const conf=f.count/lc,
+            lift=conf/(rc/n);
+            if(conf+1e-10>=minconf) rules.push({
+                left,right,support:f.support,confidence:conf,lift,count:f.count
+            });
+ 
+        }
+    } rules.sort((a,b) =>b.confidence-a.confidence||b.lift-a.lift||b.support-a.support);
+    return {
+        n,
+        items,
+        frequent,
+        rules,
+        threshold,
+        levels,
+        candidateCounts
+    };
+ 
+}
+ function pct(v) {
+    return(v*100).toFixed(1) +"%"
+}
+ function table(headers,rows) {
+    if(!rows.length) return '<div class="empty">Tidak ada hasil yang memenuhi ambang. Coba turunkan minimum support atau confidence.</div>';
+    return '<div class="table-wrap"><table><thead><tr>'+headers.map(h=>'<th>'+h+'</th>').join("") +'</tr></thead><tbody>'+rows.join("") +'</tbody></table></div>'
+}
+ function run() {
+    const tx=parseTx(),
+    s=Number($("support").value),
+    c=Number($("confidence").value);
+    if(!tx.length) {
+        alert("Masukkan setidaknya satu transaksi.");
+        return;
+ 
+    } if(!(s>=1&&s<=100&&c>=1&&c<=100)) {
+        alert("Support dan confidence harus berada di antara 1 dan 100.");
+        return;
+ 
+    }
+ const r=apriori(tx,s/100,c/100);
+    $("nTx").textContent=r.n;
+    $("nItems").textContent=r.items.length;
+    $("nFrequent").textContent=r.frequent.length;
+    const fs=[...r.frequent].sort((a,b) =>a.items.length-b.items.length||b.support-a.support||label(a.items).localeCompare(label(b.items)));
+    $("itemsetResults").innerHTML=table(["Itemset",
+    "Count (σ)",
+    "Support"] ,fs.map(x=>"<tr><td>"+label(x.items) +"</td><td>"+x.count+"</td><td>"+pct(x.support) +"</td></tr>"));
+    $("ruleResults").innerHTML=table(["Aturan X → Y",
+    "Support",
+    "Confidence",
+    "Lift"] ,r.rules.map(x=>"<tr><td>"+label(x.left) +" → "+label(x.right) +"</td><td>"+pct(x.support) +"</td><td>"+pct(x.confidence) +"</td><td>"+x.lift.toFixed(2) +"</td></tr>"));
+    const best=r.rules[0];
+    $("interpretation").innerHTML=best?"<b>Aturan dengan confidence tertinggi:</b> "+label(best.left) +" → "+label(best.right) +". Aturan muncul pada "+pct(best.support) +" dari semua transaksi; confidence "+pct(best.confidence) +" berarti "+pct(best.confidence) +" transaksi yang memuat sisi kiri juga memuat sisi kanan. Lift = "+best.lift.toFixed(2) +". "+(best.lift>1?"Lift di atas 1 menunjukkan asosiasi positif.":best.lift<1?"Lift di bawah 1 menunjukkan asosiasi negatif.":"Lift sama dengan 1 menunjukkan independensi menurut ukuran lift.") +"<br><small>Asosiasi bukan bukti hubungan sebab-akibat.</small>":"Belum ada aturan yang memenuhi confidence minimum. Turunkan confidence atau periksa data.";
+    const levels=r.levels.map(l=>"L"+l.k+": "+l.sets.length+" itemset frequent").join("; ");
+    const candidates=r.candidateCounts.map(x=>"C"+x.level+": "+x.count+" kandidat setelah join/prune").join("; ");
+    $("process").innerHTML="<b>Ambang support count:</b> ceil("+s+"% × "+r.n+") = "+r.threshold+" transaksi.<br><b>Itemset per level:</b> "+(levels||"tidak ada itemset frequent") +"<br><b>Kandidat berikutnya:</b> "+(candidates||"tidak ada kandidat lanjutan") +".";
+ 
+}
+ document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",() =>loadCase(Number(b.dataset.case))));
+ $("run").addEventListener("click",run);
+ $("restore").addEventListener("click",() =>loadCase(active));
+ loadCase(0);
+  </script>
+ </body>
+</html>
