@@ -74,10 +74,10 @@ def apriori(transaksi, min_support, min_confidence):
     level = 1
 
     print("\n=== PROSES ALGORITMA APRIORI ===")
-    print(f"Jumlah transaksi : {jumlah_transaksi}")
-    print(f"Minimum support  : {min_support}%")
+    print(f"Jumlah transaksi  : {jumlah_transaksi}")
+    print(f"Minimum support   : {min_support}%")
     print(f"Minimum confidence: {min_confidence}%")
-    print(f"Batas support    : {batas_support} transaksi")
+    print(f"Batas support     : {batas_support} transaksi")
 
     # ------------------------------------------------------
     # TAHAP 2: GENERATE, PRUNE, COUNT, DAN SELECT
@@ -173,9 +173,9 @@ def apriori(transaksi, min_support, min_confidence):
 
                 if confidence * 100 >= min_confidence:
                     aturan.append({
-                        "kiri": sisi_kiri,
-                        "kanan": sisi_kanan,
-                        "support": support_gabungan * 100,
+                        "kiri"      : sisi_kiri,
+                        "kanan"     : sisi_kanan,
+                        "support"   : support_gabungan * 100,
                         "confidence": confidence * 100,
                         "lift": lift
                     })
